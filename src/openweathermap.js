@@ -15,12 +15,9 @@
    Copyright 2022 Jason Oickle
 */
 
-const { Soup, GLib } = imports.gi;
+import Soup from 'gi://Soup';
+import GLib from 'gi://GLib';
 const ByteArray = imports.byteArray;
-const ExtensionUtils = imports.misc.extensionUtils;
-const Me = ExtensionUtils.getCurrentExtension();
-const Gettext = imports.gettext.domain(Me.metadata['gettext-domain']);
-const _ = Gettext.gettext;
 
 // Map OpenWeatherMap icon codes to icon names
 const IconMap = {

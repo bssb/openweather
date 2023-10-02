@@ -15,20 +15,20 @@
    Copyright 2022 Jason Oickle
 */
 
-const {
-    Clutter, Gio, Gtk, GLib, GObject, St
-} = imports.gi;
+import Clutter from 'gi://Clutter';
+import Gio from 'gi://Gio';
+import Gtk from 'gi://Gtk';
+import GLib from 'gi://GLib';
+import GObject from 'gi://GObject';
+import St from 'gi://St';
 
-const Main = imports.ui.main;
-const PanelMenu = imports.ui.panelMenu;
-const PopupMenu = imports.ui.popupMenu;
-const GnomeSession = imports.misc.gnomeSession;
+import * as Main from 'resource:///org/gnome/shell/ui/main.js';
+import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
+import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
+import * as GnomeSession from 'resource:///org/gnome/shell/misc/gnomeSession.js';
+import {Extension, gettext as _} from 'resource:///org/gnome/shell/extensions/extension.js';
 
-const ExtensionUtils = imports.misc.extensionUtils;
-const Me = ExtensionUtils.getCurrentExtension();
-const OpenWeatherMap = Me.imports.openweathermap;
-const Gettext = imports.gettext.domain(Me.metadata['gettext-domain']);
-const _ = Gettext.gettext;
+import * as OpenWeatherMap from './openweathermap.js';
 
 let _firstBoot = 1;
 let _timeCacheCurrentWeather;
@@ -281,7 +281,9 @@ class OpenWeatherMenuButton extends PanelMenu.Button {
     }
 
     loadConfig() {
-        this._settings = ExtensionUtils.getSettings(Me.metadata['settings-schema']);
+        let extensionObject;
+        extensionObject = Extension.lookupByURL(import.meta.url);
+        this._settings = extensionObject.getSettings();
 
         if (this._cities.length === 0)
             this._cities = "43.6534817,-79.3839347>Toronto >0";
@@ -883,7 +885,9 @@ class OpenWeatherMenuButton extends PanelMenu.Button {
 
     _onPreferencesActivate() {
         this.menu.close();
-        ExtensionUtils.openPrefs();
+        let extensionObject;
+        extensionObject = Extension.lookupByURL(import.meta.url);
+        extensionObject.openPreferences();
         return 0;
     }
 
@@ -1580,17 +1584,21 @@ class OpenWeatherMenuButton extends PanelMenu.Button {
 
 let openWeatherMenu;
 
-function init() {
-    ExtensionUtils.initTranslations(Me.metadata['gettext-domain']);
-}
+export default class OpenWeatherExtension extends Extension {
+    constructor(metadata) {
+        super(metadata);
+    }
 
-function enable() {
-    openWeatherMenu = new OpenWeatherMenuButton();
-    Main.panel.addToStatusArea('openWeatherMenu', openWeatherMenu);
-}
+    enable() {
+        openWeatherMenu = new OpenWeatherMenuButton();
+        //this._settings = this.getSettings(); // do I need this line?
+        Main.panel.addToStatusArea('openWeatherMenu', openWeatherMenu);
+    }
 
-function disable() {
-    openWeatherMenu.stop();
-    openWeatherMenu.destroy();
-    openWeatherMenu = null;
-}
+    disable() {
+        openWeatherMenu.stop();
+        openWeatherMenu.destroy();
+        openWeatherMenu = null;
+        //this._settings = null; // or this one?
+    }
+} 

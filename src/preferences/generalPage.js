@@ -15,16 +15,16 @@
    Copyright 2022 Jason Oickle
 */
 
-const {
-    Adw, Gtk, GObject
-} = imports.gi;
+import Adw from 'gi://Adw';
+import Gtk from 'gi://Gtk';
+import GObject from 'gi://GObject';
 
-const ExtensionUtils = imports.misc.extensionUtils;
-const Me = ExtensionUtils.getCurrentExtension();
-const Gettext = imports.gettext.domain(Me.metadata['gettext-domain']);
-const _ = Gettext.gettext;
+import {
+  ExtensionPreferences,
+  gettext as _
+} from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 
-var GeneralPage = GObject.registerClass(
+export var GeneralPage = GObject.registerClass(
 class OpenWeather_GeneralPage extends Adw.PreferencesPage {
     _init(settings) {
         super._init({

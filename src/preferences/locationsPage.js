@@ -15,14 +15,19 @@
    Copyright 2022 Jason Oickle
 */
 
-const {
-    Adw, Gtk, GObject, Soup, GLib
-} = imports.gi;
+import Adw from 'gi://Adw';
+import Gtk from 'gi://Gtk';
+import GObject from 'gi://GObject';
+import Soup from 'gi://Soup';
+import GLib from 'gi://GLib';
+
+import {
+  ExtensionPreferences,
+  gettext as _
+} from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
+
 const ByteArray = imports.byteArray;
-const ExtensionUtils = imports.misc.extensionUtils;
-const Me = ExtensionUtils.getCurrentExtension();
-const Gettext = imports.gettext.domain(Me.metadata['gettext-domain']);
-const _ = Gettext.gettext;
+
 // Keep enums in sync with GSettings schemas
 const GeolocationProvider = {
     OPENSTREETMAPS: 0,
@@ -30,7 +35,7 @@ const GeolocationProvider = {
     MAPQUEST: 2
 };
 
-var LocationsPage = GObject.registerClass(
+export var LocationsPage = GObject.registerClass(
 class OpenWeather_LocationsPage extends Adw.PreferencesPage {
     _init(parent, settings) {
         super._init({
@@ -670,10 +675,10 @@ class OpenWeather_SearchResultsWindow extends Adw.PreferencesWindow {
     _loadJsonAsync(url, params) {
         return new Promise((resolve, reject) => {
             // Create user-agent string from uuid and the version
-            let _userAgent = Me.metadata.uuid;
-            if (Me.metadata.version !== undefined && Me.metadata.version.toString().trim() !== '') {
+            let _userAgent = metadata.uuid;
+            if (metadata.version !== undefined && metadata.version.toString().trim() !== '') {
                 _userAgent += '/';
-                _userAgent += Me.metadata.version.toString();
+                _userAgent += metadata.version.toString();
             }
 
             let _httpSession = new Soup.Session();

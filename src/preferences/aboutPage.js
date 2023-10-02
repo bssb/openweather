@@ -15,18 +15,19 @@
    Copyright 2022 Jason Oickle
 */
 
-const {
-    Adw, GLib, Gtk, GdkPixbuf, GObject
-} = imports.gi;
+import Adw from 'gi://Adw';
+import GLib from 'gi://GLib';
+import Gtk from 'gi://Gtk';
+import GdkPixbuf from 'gi://GdkPixbuf';
+import GObject from 'gi://GObject';
+import {
+  ExtensionPreferences,
+  gettext as _
+} from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 
-const ExtensionUtils = imports.misc.extensionUtils;
-const Me = ExtensionUtils.getCurrentExtension();
-const Gettext = imports.gettext.domain(Me.metadata['gettext-domain']);
-const _ = Gettext.gettext;
-
-var AboutPage = GObject.registerClass(
+export var AboutPage = GObject.registerClass(
 class OpenWeather_AboutPage extends Adw.PreferencesPage {
-    _init() {
+    _init(metadata) {
         super._init({
             title: _("About"),
             icon_name: 'help-about-symbolic',
@@ -69,8 +70,8 @@ class OpenWeather_AboutPage extends Adw.PreferencesPage {
 
         // Info group
         let infoGroup = new Adw.PreferencesGroup();
-        let releaseVersion = (Me.metadata.version) ? Me.metadata.version : _("unknown");
-        let gitVersion = (Me.metadata['git-version']) ? Me.metadata['git-version'] : null;
+        let releaseVersion = (metadata.version) ? metadata.version : _("unknown");
+        let gitVersion = (metadata['git-version']) ? metadata['git-version'] : null;
         let windowingLabel = GLib.getenv("XDG_SESSION_TYPE") === "wayland" ? "Wayland" : "X11";
 
         // Extension version
@@ -94,9 +95,9 @@ class OpenWeather_AboutPage extends Adw.PreferencesPage {
         let gnomeVersionRow = new Adw.ActionRow({
             title: _("GNOME Version")
         });
-        gnomeVersionRow.add_suffix(new Gtk.Label({
-            label: imports.misc.config.PACKAGE_VERSION + '',
-        }));
+ //       gnomeVersionRow.add_suffix(new Gtk.Label({
+ //           label: Config.PACKAGE_VERSION + '',
+//        }));
         // session type
         let sessionTypeRow = new Adw.ActionRow({
             title: _("Session Type"),
@@ -126,18 +127,18 @@ class OpenWeather_AboutPage extends Adw.PreferencesPage {
             vexpand: false
         });
 
-        let pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(Me.path + '/media/donate-icon.png', -1, 50, true);
+        let pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(this.path + '/media/donate-icon.png', -1, 50, true);
         let donateImage = Gtk.Picture.new_for_pixbuf(pixbuf);
         let donateButton = new Gtk.LinkButton({
             child: donateImage,
             uri: 'https://www.paypal.com/donate/?hosted_button_id=VZ7VLXPU2M9RQ'
         });
 
-        pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(Me.path + '/media/gitlab-icon.png', -1, 50, true);
+        pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(this.path + '/media/gitlab-icon.png', -1, 50, true);
         let gitlabImage = Gtk.Picture.new_for_pixbuf(pixbuf);
         let gitlabButton = new Gtk.LinkButton({
             child: gitlabImage,
-            uri: Me.metadata.url
+            uri: metadata.url
         });
         let imageLinksBox = new Adw.ActionRow();
 
